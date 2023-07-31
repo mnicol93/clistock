@@ -8,6 +8,7 @@ class BuyStockCommand(Command):
         self._fetcher = fetcher
 
     def execute(self):
-        price = self._fetcher.get_price(self._symbol, "&summary=true")
-        result = self._fetcher.set_buy(self._symbol, self._quantity, price)
+        data = self._fetcher.get_stock_data(self._symbol, "&summary=true")
+        result = self._fetcher.set_buy(
+            self._symbol, self._quantity, data)
         return result

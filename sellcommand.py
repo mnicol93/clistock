@@ -7,5 +7,7 @@ class SellStockCommand(Command):
         self._quantity = quantity
         self._fetcher = fetcher
 
-    def execute():
-        return 0
+    def execute(self):
+        data = self._fetcher.get_stock_data(self._symbol, "&summary=true")
+        result = self._fetcher.set_sell(self._symbol, self._quantity, data)
+        return result
