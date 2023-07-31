@@ -1,6 +1,7 @@
 import curses
 import argparse
 from PyInquirer import prompt, print_json
+from stockfetch import StockDataFetcher
 #Handle screen content
 screen = curses.initscr()
 
