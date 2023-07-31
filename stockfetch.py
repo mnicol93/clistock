@@ -5,21 +5,21 @@ import configparser
 config = configparser.ConfigParser()
 config.read('config.ini')
 # TODO: config file for key
-headers = {'key': "F0836B451F204B58BCE973AA3BC7ADFB"}
+headers = {'key': config.get("API", "api_key")}
 URL = "https://api.aletheiaapi.com/StockData?symbol="
 
 
 class StockDataFetcher:
     __instance = None
+    uri = config.get("DATABASE", "url")
+    # Create a Mongo Client Object
+    client = MongoClient(uri,
+                         tls=True,
+                         tlsCertificateKeyFile=config.get("DATABASE", "key"))
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(StockDataFetcher, cls).__new__(cls)
-            uri = config.get("DATABASE", "url")
-            # Create a Mongo Client Object
-            client = MongoClient(uri,
-                                 tls=True,
-                                 tlsCertificateKeyFile=config.get("DATABASE", "key"))
         return cls.__instance
 
     def get_price_str(self, ticker, fields) -> str:
@@ -46,7 +46,14 @@ class StockDataFetcher:
             print("Error in fetching")
         return 0.0
 
-    def set_buy():
+    def set_buy(symbol, quantity, price):
+        # Connect to the sample_airbnb database provided by MongoDB for testing
+        db = client['sample_airbnb']
+        # Access the collection listingAndReviews
+        collection = db['listingsAndReviews']
+        return 0
+
+    def set_sell():
         return 0
 
     def get_portfolio() -> dict:
