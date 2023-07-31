@@ -2,69 +2,102 @@ import curses
 import argparse
 from PyInquirer import prompt, print_json
 from stockfetch import StockDataFetcher
-#Handle screen content
+# Handle screen content
 screen = curses.initscr()
+# Handles all operations with DB and API
+sdata = StockDataFetcher()
+
 
 def print_menu():
     curses.curs_set(0)
-    screen.addstr(0,2,"Welcome to CLIStock! What would you like to do? Please, introduce a number\n")
-    screen.addstr(1,2,"==========================================================================\n")
-    
-    screen.addstr(2,3, "1. Check portfolio")
+    screen.addstr(
+        0, 2, "Welcome to CLIStock! What would you like to do? Please, introduce a number\n")
+    screen.addstr(
+        1, 2, "==========================================================================\n")
+
+    screen.addstr(2, 3, "1. Check portfolio")
     screen.refresh()
     curses.napms(200)
-    screen.addstr(3,3, "2. Check individual stock price")
+    screen.addstr(3, 3, "2. Check individual stock price")
     screen.refresh()
     curses.napms(200)
-    screen.addstr(4,3, "3. Add stock to portfolio")
+    screen.addstr(4, 3, "3. Add stock to portfolio")
     screen.refresh()
     curses.napms(200)
-    screen.addstr(5,3, "4. Sell stock from portfolio")
+    screen.addstr(5, 3, "4. Sell stock from portfolio")
     screen.refresh()
     curses.napms(200)
-    screen.addstr(6,3, "0. Exit")
+    screen.addstr(6, 3, "0. Exit")
+
+
 def select_option(option):
     curses.noecho()
-    while(option < 0 or option > 4):
+    while (option < 0 or option > 4):
         option = screen.getch()-48
     return option
-    
+
+
 def menu():
     option = -1
     print_menu()
     option = select_option(option)
     curses.curs_set(1)
     if option == 0:
-        screen.addstr(6,3,"")
+        screen.addstr(6, 3, "")
         screen.refresh()
         curses.endwin()
     else:
-        screen.addstr(option+1,3,"")
-        #Call function selected by user
-        
+        screen.addstr(option+1, 3, "")
+
     screen.refresh()
 
     curses.napms(500)
     screen.clear()
     screen.refresh()
-
+    # Call function selected by user
     options[option]()
-    
+
+
 def buy_stock():
     return 0
+
+
 def sell_stock():
     return 0
+
+
 def check_stock():
-    screen.addstr(0,0,"Buying stock")
+    screen.addstr(0, 0, "Checking stock price, please wait")
     screen.refresh()
-    
-    return 0
-def show_portfolio():
+    curses.napms(300)
+    price = sdata.get_price("msft", "&summary=true")
+
+    screen.addstr(2, 0, "The price is: " + str(price) + "$")
+    screen.refresh()
+    screen.addstr(3, 0, "Press Enter to continue")
+    enter = False
+    while enter != True:
+        enter = True if screen.getch() == ord('\n') else False
+    screen.clear()
+    screen.refresh()
     return 0
 
-#List storing menu functions to call dynamically
+
+def show_portfolio():
+
+    return 0
+
+
+# List storing menu functions to call dynamically
 options = [None, show_portfolio, check_stock, buy_stock, sell_stock]
 
-menu()
-screen.refresh()
-curses.endwin()
+
+def main():
+    while 1:
+        menu()
+        screen.refresh()
+    curses.endwin()
+
+
+if __name__ == "__main__":
+    main()
