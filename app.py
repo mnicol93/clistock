@@ -24,7 +24,7 @@ def print_menu():
     screen.addstr(6,3, "0. Exit")
 def select_option(option):
     curses.noecho()
-    while(option == -1):
+    while(option < 0 or option > 4):
         option = screen.getch()-48
     return option
     
@@ -36,19 +36,27 @@ def menu():
     if option == 0:
         screen.addstr(6,3,"")
         screen.refresh()
+        curses.endwin()
     else:
         screen.addstr(option+1,3,"")
         #Call function selected by user
-        options[option]()
+        
     screen.refresh()
 
-    curses.napms(1000)
+    curses.napms(500)
+    screen.clear()
+    screen.refresh()
+
+    options[option]()
     
 def buy_stock():
     return 0
 def sell_stock():
     return 0
 def check_stock():
+    screen.addstr(0,0,"Buying stock")
+    screen.refresh()
+    
     return 0
 def show_portfolio():
     return 0
