@@ -46,6 +46,7 @@ def menu():
         screen.addstr(6, 3, "")
         screen.refresh()
         curses.endwin()
+        return 0
     else:
         screen.addstr(option+1, 3, "")
 
@@ -56,6 +57,7 @@ def menu():
     screen.refresh()
     # Call function selected by user
     options[option]()
+    return option
 
 
 def buy_stock():
@@ -72,7 +74,7 @@ def check_stock():
     curses.napms(300)
     price = sdata.get_price("msft", "&summary=true")
 
-    screen.addstr(2, 0, "The price is: " + str(price) + "$")
+    screen.addstr(2, 0, price)
     screen.refresh()
     screen.addstr(3, 0, "Press Enter to continue")
     enter = False
@@ -93,8 +95,9 @@ options = [None, show_portfolio, check_stock, buy_stock, sell_stock]
 
 
 def main():
-    while 1:
-        menu()
+    option = 1
+    while (option > 0):
+        option = menu()
         screen.refresh()
     curses.endwin()
 
