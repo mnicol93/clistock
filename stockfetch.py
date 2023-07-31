@@ -22,16 +22,14 @@ class StockDataFetcher:
                                  tlsCertificateKeyFile=config.get("DATABASE", "key"))
         return cls.__instance
 
-    def get_price(self, ticker, fields) -> float:
+    def get_price(self, ticker, fields) -> str:
 
         final_url = URL+ticker+fields
         response = requests.get(final_url, headers=headers)
 
         if response.status_code == 200:
             data = response.json()
-            return data['Summary']['Price']
-            # print(data['Symbol'] + ' - ' + data['Summary']['Name'] + ' - ' +
-            #     str(data['Summary']['Price']) + "$")
+            return "The price of " + data['Symbol'] + ' - ' + data['Summary']['Name'] + " is: " + str(data['Summary']['Price']) + "$"
         else:
             print("Error in fetching")
         return 0.0
