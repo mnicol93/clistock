@@ -1,8 +1,9 @@
 import curses
 import argparse
 from PyInquirer import prompt, print_json
-
+#Handle screen content
 screen = curses.initscr()
+
 def print_menu():
     curses.curs_set(0)
     screen.addstr(0,2,"Welcome to CLIStock! What would you like to do? Please, introduce a number\n")
@@ -25,9 +26,6 @@ def select_option(option):
     curses.noecho()
     while(option == -1):
         option = screen.getch()-48
-        if option == 0:
-            screen.addstr(6,2,"")
-            screen.refresh()
     return option
     
 def menu():
@@ -35,11 +33,28 @@ def menu():
     print_menu()
     option = select_option(option)
     curses.curs_set(1)
-    screen.addstr(option+1,3,"")
+    if option == 0:
+        screen.addstr(6,3,"")
+        screen.refresh()
+    else:
+        screen.addstr(option+1,3,"")
+        #Call function selected by user
+        options[option]()
     screen.refresh()
 
     curses.napms(1000)
     
+def buy_stock():
+    return 0
+def sell_stock():
+    return 0
+def check_stock():
+    return 0
+def show_portfolio():
+    return 0
+
+#List storing menu functions to call dynamically
+options = [None, show_portfolio, check_stock, buy_stock, sell_stock]
 
 menu()
 screen.refresh()
