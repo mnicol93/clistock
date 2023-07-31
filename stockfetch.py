@@ -29,7 +29,7 @@ class StockDataFetcher:
 
         if response.status_code == 200:
             data = response.json()
-            return "The price of " + data['Symbol'] + ' - ' + data['Summary']['Name'] + " is: " + str(data['Summary']['Price']) + "$"
+            return "The price of " + data['Symbol'] + '-' + data['Summary']['Name'] + " is: " + str(data['Summary']['Price']) + "$"
         else:
             print("Error in fetching")
         return 0.0
