@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+from bson.json_util import dumps, loads
+from stock import Stock
 import requests
 import configparser
 
@@ -13,9 +15,9 @@ class StockDataFetcher:
     __instance = None
     uri = config.get("DATABASE", "url")
     # Create a Mongo Client Object
-    client = MongoClient(uri,
-                         tls=True,
-                         tlsCertificateKeyFile=config.get("DATABASE", "key"))
+    _client = MongoClient(uri,
+                          tls=True,
+                          tlsCertificateKeyFile=config.get("DATABASE", "key"))
 
     def __new__(cls):
         if cls.__instance is None:
@@ -46,12 +48,24 @@ class StockDataFetcher:
             print("Error in fetching")
         return 0.0
 
-    def set_buy(symbol, quantity, price):
-        # Connect to the sample_airbnb database provided by MongoDB for testing
-        db = client['sample_airbnb']
-        # Access the collection listingAndReviews
-        collection = db['listingsAndReviews']
-        return 0
+    def set_buy(self, symbol, quantity, price):
+        # Connect to the stocks database
+        db = self._client["stocks"]
+        # Access the collection portfolio1
+        collection = db["portfolio1"]
+        result = collection.find_one({"symbol": symbol})
+
+        if result == None:
+            collection.insert_one(Stock(symbol, quantity, price))
+        else:
+            old_price = result['quantity'] * result['avg_price']
+            new_price = quantity * price
+            avg_price = (old_price + new_price) / \
+                (quantity + result['quantity'])
+            quantity += result['quantity']
+            collection.update_one({"symbol": symbol}, {
+                                  "$set": {"quantity": quantity, "price": price, "avg_price": avg_price}})
+        return result
 
     def set_sell():
         return 0

@@ -1,10 +1,10 @@
 import curses
 import argparse
-from PyInquirer import prompt, print_json
 from stockfetch import StockDataFetcher
 from buycommand import BuyStockCommand
 from sellcommand import SellStockCommand
 from commandinvoker import CommandInvoker
+from utils import press_enter
 
 # Handle screen content
 screen = curses.initscr()
@@ -65,6 +65,28 @@ def menu():
 
 
 def buy_stock():
+    quantity = 5
+    symbol = "msft"
+
+    invoker = CommandInvoker()
+    buy = BuyStockCommand(symbol, quantity, sdata)
+
+    screen.clear()
+    screen.refresh()
+
+    screen.addstr(3, 5, "Buying " + str(quantity) +
+                  " shares of " + symbol + ". Please wait...")
+    screen.refresh()
+
+    invoker.set_command(buy)
+    result = invoker.execute_command()
+    screen.addstr(6, 5, "Success! New amount owned of " +
+                  result['symbol'] + " is " + str(result['quantity']) + " with an average price of " + str(result['avg_price']) + "$.")
+    press_enter(screen, 8, 5)
+    screen.refresh()
+    curses.napms(1000)
+    screen.clear()
+    screen.refresh()
     return 0
 
 
@@ -80,12 +102,9 @@ def check_stock():
 
     screen.addstr(2, 0, price)
     screen.refresh()
-    screen.addstr(3, 0, "Press Enter to continue")
-    enter = False
-    while enter != True:
-        enter = True if screen.getch() == ord('\n') else False
-    screen.clear()
-    screen.refresh()
+
+    press_enter(screen, 3, 0)
+
     return 0
 
 
