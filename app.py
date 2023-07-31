@@ -2,6 +2,10 @@ import curses
 import argparse
 from PyInquirer import prompt, print_json
 from stockfetch import StockDataFetcher
+from buycommand import BuyStockCommand
+from sellcommand import SellStockCommand
+from commandinvoker import CommandInvoker
+
 # Handle screen content
 screen = curses.initscr()
 # Handles all operations with DB and API
@@ -72,7 +76,7 @@ def check_stock():
     screen.addstr(0, 0, "Checking stock price, please wait")
     screen.refresh()
     curses.napms(300)
-    price = sdata.get_price("msft", "&summary=true")
+    price = sdata.get_price_str("msft", "&summary=true")
 
     screen.addstr(2, 0, price)
     screen.refresh()
