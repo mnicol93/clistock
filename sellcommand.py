@@ -2,9 +2,8 @@ from command import Command
 
 
 class SellStockCommand(Command):
-    def __init__(self, symbol, price, quantity, fetcher):
+    def __init__(self, symbol, quantity, fetcher):
         self._symbol = symbol
-        self._price = price
         self._quantity = quantity
         self._fetcher = fetcher
 
