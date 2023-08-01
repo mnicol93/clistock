@@ -5,7 +5,7 @@ from buycommand import BuyStockCommand
 from sellcommand import SellStockCommand
 from portfolio import ShowPortfolio
 from commandinvoker import CommandInvoker
-from utils import press_enter, get_input
+from utils import press_enter, get_input, print_menu, select_option
 
 # Handle screen content
 screen = curses.initscr()
@@ -14,39 +14,39 @@ sdata = StockDataFetcher()
 total_investment = 0
 
 
-def print_menu():
-    curses.curs_set(0)
-    screen.addstr(
-        0, 2, "Welcome to CLIStock! What would you like to do? Please, introduce a number\n")
-    screen.addstr(
-        1, 2, "==========================================================================\n")
+# def print_menu():
+#     curses.curs_set(0)
+#     screen.addstr(
+#         0, 2, "Welcome to CLIStock! What would you like to do? Please, introduce a number\n")
+#     screen.addstr(
+#         1, 2, "==========================================================================\n")
 
-    screen.addstr(2, 3, "1. Check portfolio")
-    screen.refresh()
-    curses.napms(200)
-    screen.addstr(3, 3, "2. Check individual stock price")
-    screen.refresh()
-    curses.napms(200)
-    screen.addstr(4, 3, "3. Add stock to portfolio")
-    screen.refresh()
-    curses.napms(200)
-    screen.addstr(5, 3, "4. Sell stock from portfolio")
-    screen.refresh()
-    curses.napms(200)
-    screen.addstr(6, 3, "0. Exit")
+#     screen.addstr(2, 3, "1. Check portfolio")
+#     screen.refresh()
+#     curses.napms(200)
+#     screen.addstr(3, 3, "2. Check individual stock price")
+#     screen.refresh()
+#     curses.napms(200)
+#     screen.addstr(4, 3, "3. Add stock to portfolio")
+#     screen.refresh()
+#     curses.napms(200)
+#     screen.addstr(5, 3, "4. Sell stock from portfolio")
+#     screen.refresh()
+#     curses.napms(200)
+#     screen.addstr(6, 3, "0. Exit")
 
 
-def select_option(option):
-    curses.noecho()
-    while (option < 0 or option > 4):
-        option = screen.getch()-48
-    return option
+# def select_option(option):
+#     curses.noecho()
+#     while (option < 0 or option > 4):
+#         option = screen.getch()-48
+#     return option
 
 
 def menu():
     option = -1
-    print_menu()
-    option = select_option(option)
+    print_menu(screen, curses)
+    option = select_option(option, screen, curses)
     curses.curs_set(1)
     if option == 0:
         screen.addstr(6, 3, "")
