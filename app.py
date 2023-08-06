@@ -4,6 +4,8 @@ from stockfetch import StockDataFetcher
 from buycommand import BuyStockCommand
 from sellcommand import SellStockCommand
 from portfolio import ShowPortfolio
+from stock import Stock
+from stockobserver import StockObserverConcrete
 from commandinvoker import CommandInvoker
 from utils import press_enter, get_input, print_menu, select_option
 
@@ -14,7 +16,7 @@ sdata = StockDataFetcher()
 total_investment = 0
 
 
-def menu():
+def menu(observer):
     option = -1
     print_menu(screen, curses)
     option = select_option(option, screen, curses)
@@ -34,7 +36,9 @@ def menu():
     screen.refresh()
     # Call function selected by user
     # Buy Stock
-    if option == 3:
+    if option == 1:
+        show_portfolio(observer)
+    elif option == 3:
         buy_stock(buying=True)
     # Sell Stock
     elif option == 4:
@@ -101,8 +105,7 @@ def check_stock():
     return 0
 
 
-def show_portfolio():
-    total_investment = 0
+def show_portfolio(observer):
     index = 2
 
     invoker = CommandInvoker()
@@ -110,35 +113,50 @@ def show_portfolio():
 
     invoker.set_command(portfolio)
     screen.addstr(
-        0, 0, "Symbol--|Name-----------------------------------|Qty--|Price---|Avg------|P/L------|Benefit-------|Weight")
+        0, 0, "Symbol--|Name-----------------------------------|Qty--|Price---|Open--|Avg------|P/L------|Benefit-------|Weight")
     screen.addstr(
-        1, 0, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        1, 0, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     result = invoker.execute_command()
 
     for res in result:
+        price = sdata.get_stock_data(res['symbol'], "&summary=true")
+        stock = Stock(res['symbol'], res['quantity'],
+                      price['Summary']['Price'], res['name'], price['Summary']['PreviousClose'])
+        # Detect whether stock had a variation in price of <> 1% to notify later
+        if stock.update():
+            observer.attach_observer(stock)
+        else:
+            observer.detach_observer(stock)
         # Calculations
         avg_price_round = "%0.2f" % res['avg_price']
-        benefit = ((res['quantity'] * res['price']) -
+        benefit = ((res['quantity'] * stock._price) -
                    (res['quantity'] * res['avg_price']))
         pl = "%0.2f" % (
             (benefit/(res['quantity'] * res['avg_price'])) * 100)
         benefit = "%0.2f" % benefit
         weight = "%0.2f" % (((res['quantity']*res['price'])/1)*100)
-
+        # Printing table
         screen.addstr(index, 0, res['symbol'])
         screen.addstr(index, 8, '|' + res['name'])
         screen.addstr(index, 48, '|' + str(res['quantity']))
-        screen.addstr(index, 54, '|' + str(res['price']))
-        screen.addstr(index, 63, '|' + str(avg_price_round))
-        screen.addstr(index, 73, '|' + str(pl) + '%')
-        screen.addstr(index, 83, '|' + str(benefit))
-        screen.addstr(index, 98, '|' + str(weight)+'%')
+        screen.addstr(index, 54, '|' + str(stock._price))
+        screen.addstr(index, 63, '|' + str(stock._open_price))
+        screen.addstr(index, 70, '|' + str(avg_price_round))
+        screen.addstr(index, 80, '|' + str(pl) + '%')
+        screen.addstr(index, 90, '|' + str(benefit))
+        screen.addstr(index, 115, '|' + str(weight)+'%')
         screen.addstr(
             index+1, 0, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         index += 2
 
     press_enter(screen, index + 2, 0)
+    index = 0
+    # Observer notifies to print the subjects that changed, returns index to print 'Continue'
+    index = observer.notify_observer(index, curses, screen)
+
+    press_enter(screen, index + 1, 0)
+
     return 0
 
 
@@ -148,10 +166,10 @@ options = [None, show_portfolio, check_stock,
 
 
 def main():
-
+    observer = StockObserverConcrete()
     option = 1
     while (option > 0):
-        option = menu()
+        option = menu(observer)
         screen.refresh()
     curses.endwin()
 
