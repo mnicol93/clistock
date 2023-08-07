@@ -113,9 +113,9 @@ def show_portfolio(observer):
 
     invoker.set_command(portfolio)
     screen.addstr(
-        0, 0, "Symbol--|Name-----------------------------------|Qty--|Price---|Open--|Avg------|P/L------|Benefit-------|Weight")
+        0, 0, "Symbol--|Name-----------------------------------|Qty--|Price---|Open--|Avg------|P/L------|Benefit------|")
     screen.addstr(
-        1, 0, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        1, 0, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     result = invoker.execute_command()
 
@@ -140,7 +140,6 @@ def show_portfolio(observer):
         pl = "%0.2f" % (
             (benefit/(res['quantity'] * res['avg_price'])) * 100)
         benefit = "%0.2f" % benefit
-        weight = "%0.2f" % (((res['quantity']*res['price'])/1)*100)
         # Printing table
         screen.addstr(index, 0, res['symbol'])
         screen.addstr(index, 8, '|' + res['name'])
@@ -150,9 +149,9 @@ def show_portfolio(observer):
         screen.addstr(index, 70, '|' + str(avg_price_round))
         screen.addstr(index, 80, '|' + str(pl) + '%')
         screen.addstr(index, 90, '|' + str(benefit))
-        screen.addstr(index, 115, '|' + str(weight)+'%')
+        screen.addstr(index, 104, '|')
         screen.addstr(
-            index+1, 0, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            index+1, 0, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         index += 2
 
     press_enter(screen, index + 2, 0)

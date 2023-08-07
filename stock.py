@@ -30,8 +30,6 @@ class Stock(Observer):
     def print(self, idx, curses, screen):
         text = "The stock " + self._name + " had a change since opening of: "
         variation = self._variation
-        # screen.addstr(idx, 0, text)
-        # screen.addstr(idx, len(text), str(variation))
         # Initialize color pairs
         curses.start_color()
         if variation < 1:
