@@ -123,6 +123,11 @@ def show_portfolio(observer):
         price = sdata.get_stock_data(res['symbol'], "&summary=true")
         stock = Stock(res['symbol'], res['quantity'],
                       price['Summary']['Price'], res['name'], price['Summary']['PreviousClose'])
+        # TESTING:
+
+        # if stock._symbol == 'msft':
+        #     stock._price += 40.0
+
         # Detect whether stock had a variation in price of <> 1% to notify later
         if stock.update():
             observer.attach_observer(stock)
