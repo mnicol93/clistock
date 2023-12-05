@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from bson.json_util import dumps, loads
 
 # URI information will go on a config file
-uri = "mongodb+srv://cluster0.bzpteb1.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
+uri = "xxx"
 # Create a Mongo Client Object
 client = MongoClient(uri,
                      tls=True,
